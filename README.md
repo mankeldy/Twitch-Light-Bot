@@ -3,7 +3,7 @@ This is not the first time anyone has made scripts to control the Govee LED ligh
 Known Compatible Configurations - \
 Phone: Samsung Galaxy S10 \ 
 Emulator: Bluestacks 5 \
-Govee Product: H6117
+Govee Product: H6117 \
 
 Setting up the Twitch Bot would not have been possible without: https://dev.to/ninjabunny9000/let-s-make-a-twitch-bot-with-python-2nd8
 
