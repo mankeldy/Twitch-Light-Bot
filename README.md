@@ -1,9 +1,9 @@
 This is not the first time anyone has made scripts to control the Govee LED lights. Typically, these involved using the Govee API to control the lights via wifi directly from the computer. However, it was unclear to me whether or not the RGBIC could be scripted to their full potential using this method. To avoid this issue, I created the script `govee_controller` to interface directly with the Govee Home App through your phone or emulator.
 
-Known Compatible Configurations - \
-Phone: Samsung Galaxy S10 \ 
-Emulator: Bluestacks 5 \
-Govee Product: H6117 \
+Known Compatible Configurations -\
+Phone: Samsung Galaxy S10\ 
+Emulator: Bluestacks 5\
+Govee Product: H6117\
 
 Setting up the Twitch Bot would not have been possible without: https://dev.to/ninjabunny9000/let-s-make-a-twitch-bot-with-python-2nd8
 
