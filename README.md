@@ -1,8 +1,8 @@
-This is not the first time anyone has made scripts to control the Govee LED lights. Typically, these involved using the Govee API to control the lights via wifi directly from the computer. However, it was unclear to me whether or not the RGBIC could be scripted to their full potential using this method. To avoid this issue, I created the script govee_controller to interface directly with the Govee Home App through your phone or emulator.
+This is not the first time anyone has made scripts to control the Govee LED lights. Typically, these involved using the Govee API to control the lights via wifi directly from the computer. However, it was unclear to me whether or not the RGBIC could be scripted to their full potential using this method. To avoid this issue, I created the script `govee_controller` to interface directly with the Govee Home App through your phone or emulator.
 
-Known Compatible Configurations
-Phone: Samsung Galaxy S10
-Emulator: Bluestacks 5
+Known Compatible Configurations - \
+Phone: Samsung Galaxy S10 \ 
+Emulator: Bluestacks 5 \
 Govee Product: H6117
 
 Setting up the Twitch Bot would not have been possible without: https://dev.to/ninjabunny9000/let-s-make-a-twitch-bot-with-python-2nd8
@@ -12,9 +12,9 @@ Setting up the Twitch Bot would not have been possible without: https://dev.to/n
 Download Bluestacks 5 or similar emulator if not interfacing with your phone and download the Govee Home App
 
 ## Update the .env with your tokens and storage.py with your DIY light settings
-Get your Streamlabs Socket API Token : https://streamlabs.com/dashboard#/settings/api-settings (This connects the bot to streamlabs for their notifications)
-Get your TMI Token:  https://twitchapps.com/tmi/ (Connects your acccount/bot account to twitch)
-Get your Client ID: https://dev.twitch.tv/console/apps/create (Honestly, not sure what this does. Seems to run without it just fine, but I followed the guide above to the letter)
+Get your `Streamlabs Socket API Token` : https://streamlabs.com/dashboard#/settings/api-settings (This connects the bot to streamlabs for their notifications)
+Get your `TMI Token`:  https://twitchapps.com/tmi/ (Connects your acccount/bot account to twitch)
+Get your `Client ID`: https://dev.twitch.tv/console/apps/create (Honestly, not sure what this does. Seems to run without it just fine, but I followed the guide above to the letter)
 
 ## Starting the virtual environment:
  - Install python 3.6 or 3.7
@@ -25,7 +25,7 @@ Get your Client ID: https://dev.twitch.tv/console/apps/create (Honestly, not sur
  - pipenv install dotenv
  
 ## Run the bot:
-  - pipenv run python bot.py
+  - pipenv run python `bot.py`
   
   OR 
   
