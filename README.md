@@ -29,4 +29,4 @@ Get your Client ID: https://dev.twitch.tv/console/apps/create (Honestly, not sur
   
   OR 
   
-  In Visual Studio Code, select the interpreter as your virtual environment and run the code.
+  - In Visual Studio Code, select the interpreter as your virtual environment and run the code.
