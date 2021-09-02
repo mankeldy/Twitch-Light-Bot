@@ -7,16 +7,16 @@ Govee Product: H6117
 
 Setting up the Twitch Bot would not have been possible without: https://dev.to/ninjabunny9000/let-s-make-a-twitch-bot-with-python-2nd8
 
-## Getting started:
+# Getting started:
 
 Download Bluestacks 5 or similar emulator if not interfacing with your phone and download the Govee Home App
 
-# Update the .env with your tokens and storage.py with your DIY light settings
+## Update the .env with your tokens and storage.py with your DIY light settings
 Get your Streamlabs Socket API Token : https://streamlabs.com/dashboard#/settings/api-settings (This connects the bot to streamlabs for their notifications)
 Get your TMI Token:  https://twitchapps.com/tmi/ (Connects your acccount/bot account to twitch)
 Get your Client ID: https://dev.twitch.tv/console/apps/create (Honestly, not sure what this does. Seems to run without it just fine, but I followed the guide above to the letter)
 
-# Starting the virtual environment:
+## Starting the virtual environment:
  - Install python 3.6 or 3.7
  - Navigate to the working directory in CMD
  - pipenv --python 3.6 or 3.7
@@ -24,7 +24,7 @@ Get your Client ID: https://dev.twitch.tv/console/apps/create (Honestly, not sur
  - pipenv install twitchio
  - pipenv install dotenv
  
-# Run the bot:
+## Run the bot:
   - pipenv run python bot.py
   
   OR 
