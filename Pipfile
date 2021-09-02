@@ -1,0 +1,16 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+twitchio = "*"
+pure-python-adb = "*"
+python-dotenv = "*"
+python-socketio = {version = "==4.6.0", extras = ["client"]}
+python-engineio = "==3.14.2"
+
+[dev-packages]
+
+[requires]
+python_version = "3.7"
