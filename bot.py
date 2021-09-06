@@ -19,12 +19,11 @@ sio.connect('https://sockets.streamlabs.com?token=' + os.environ['STREAMLABS_SOC
 def on_connect():
     print("Connected to Streamlabs, Wait for Events")
 
-coordinates = gv.govee_grid(lights) #sets up grid
-
+#coordinates = gv.govee_grid(device,lights) #sets up grid
 print("Lights shown to users are {}".format(user_lights))
 
 #Actions
-gv.select_lights(device,coordinates, lights[-1]) #initial setting
+gv.select_lights(device,lights, lights[-1]) #initial setting
 
 # set up the bot with the proper environment tokens and information
 bot = commands.Bot(
@@ -37,10 +36,10 @@ bot = commands.Bot(
 
 @sio.on("event")
 def on_message(data):
-    print((data['type']))
-    print(data['type'] == 'follow')
+    #print((data['type']))
+    #print(data['type'] == 'follow')
     if data['type'] == 'follow':
-        gv.timed_light(device,coordinates,'rainbow_light','new_follower')
+        gv.timed_light(device,lights,'rainbow_light','new_follower')
  
 @bot.event()
 async def event_ready():
@@ -57,8 +56,8 @@ async def test(ctx):
 
 @bot.command(name='rgb')
 async def test(ctx,arg):
-    gv.select_lights(device,coordinates, arg)
     await ctx.send('Changing to {}'.format(arg))
+    gv.select_lights(device,lights, arg)
 
 if __name__ == "__main__":
     bot.run()
