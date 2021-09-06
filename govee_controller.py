@@ -147,14 +147,13 @@ def find_position(x1,y1,x2,y2):
 
 def govee_ui(device):
     ui_dump = device.shell('uiautomator dump /dev/tty')
-    print("ui dump is here {}".format(ui_dump))
-    text = re.findall('text="(.*?)"',ui_dump)
+    #text = re.findall('text="(.*?)"',ui_dump)
     resource_id = (re.findall('resource-id="(.*?)"',ui_dump))
     bounds = re.findall('bounds="\[(.*?),(.*?)\]\[(.*?),(.*?)\]',ui_dump)
-    if len(text) != len(resource_id) or  len(text) != len(bounds) or len(resource_id) != len(bounds):
+    if len(resource_id) != len(bounds) or len(ui_dump) == 0:
         print('Uh oh, something is wrong with the the UI info dumps')
         exit()
-    dictionary = {}
+    info = {}
     light_list = []
 
     x1,y1,x2,y2 = zip(*bounds)
@@ -166,12 +165,15 @@ def govee_ui(device):
         if resource_id[id] == 'com.govee.home:id/img_icon':
             position = find_position(x1[id],y1[id],x2[id],y2[id])
             light_list.append(position)
-        dictionary[resource_id[id]] = {"x1" : x1[id],"y1": y1[id],"x2":x2[id],"y2":y2[id]}
-    
-    return dictionary, light_list
+        if resource_id[id] == 'com.govee.home:id/bg_view' or resource_id[id] =='com.govee.home:id/content':
+            info[resource_id[id]] = {"x1" : x1[id],"y1": y1[id],"x2":x2[id],"y2":y2[id]}
+    if len(info) == 0 or len(light_list) == 0:
+        print('Number of interactions is too much, please stand by')
+        exit()
+    return info, light_list
 
 
 if __name__ == "__main__":
     device, client = connect()
-    #open_govee_lights(device)
-    print(device.shell('uiautomator dump /dev/tty'))
+    open_govee_lights(device)
+
