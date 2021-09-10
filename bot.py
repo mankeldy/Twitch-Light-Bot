@@ -1,4 +1,5 @@
 """" Light Bot """
+
 import os
 from ppadb.command import transport # for importing env vars for the bot to use
 #import twitchio
@@ -8,6 +9,7 @@ from dotenv import load_dotenv
 import socketio
 import time
 from storage import *
+from datetime import datetime
 
 load_dotenv()
 device,client = gv.connect() #connects to android phone or emulator
@@ -33,14 +35,24 @@ bot = commands.Bot(
     prefix=os.environ['BOT_PREFIX'],
     initial_channels=[os.environ['CHANNEL']]
 )
+list_of_keys = ['rgb','event']
+wait_time = dict.fromkeys(list_of_keys,0)
+time_to_wait =15.
+count = []
+current_light = [0]
+current_light[0] = 'rainbow_light'
 
 @sio.on("event")
 def on_message(data):
-    #print((data['type']))
-    #print(data['type'] == 'follow')
-    if data['type'] == 'follow':
-        gv.timed_light(device,lights,'rainbow_light','new_follower')
- 
+    while datetime.now().timestamp()-wait_time['rgb'] < 2.:
+        None #Waiting loop to spool notifications
+    if wait_time['event'] == 0 or datetime.now().timestamp()-wait_time['event'] > 10.:
+        if data['type'] == 'follow':
+            count.append(1)
+            print(len(count))
+            wait_time['event'] = datetime.now().timestamp()
+            gv.timed_light(device,lights,current_light[0],'new_follower')
+
 @bot.event()
 async def event_ready():
     'Called once when the bot goes online.'
@@ -50,14 +62,20 @@ async def event_ready():
 async def test(ctx):
     await ctx.send('test passed!')
 
-@bot.command(name='rgb_list')
-async def test(ctx):
-    await ctx.send(str(user_lights))
-
 @bot.command(name='rgb')
-async def test(ctx,arg):
-    await ctx.send('Changing to {}'.format(arg))
-    gv.select_lights(device,lights, arg)
+async def test(ctx,arg=None):
+    if arg == None:
+        await ctx.send(str(user_lights))
+    elif wait_time['rgb'] == 0 or (datetime.now().timestamp()-wait_time['rgb'] > time_to_wait and datetime.now().timestamp()-wait_time['event'] > time_to_wait):
+        if arg in lights:
+            wait_time['rgb'] = datetime.now().timestamp()
+            await ctx.send('Changing to {}'.format(arg))
+            gv.select_lights(device,lights, arg)
+            current_light[0] = arg
+    else:
+        await ctx.send('please wait your turn')
+
+
 
 if __name__ == "__main__":
     bot.run()

@@ -122,7 +122,7 @@ def select_lights(device,light_list,mode):
     device.shell('input tap {} {}'.format(grid[mode][0],grid[mode][1]))
 
 
-def timed_light(device,light_list,current_mode,timed_mode,set_time = 3):
+def timed_light(device,light_list,current_mode,timed_mode,set_time = 1):
     """
     Turns on a selected mode for a desired amount of time, in seconds. Useful for follower or subscriber 
     notifications. Currently, there's no way to go back to a previous mode, so 'current_mode' must
@@ -146,30 +146,32 @@ def find_position(x1,y1,x2,y2):
     return [pos_x,pos_y]
 
 def govee_ui(device):
-    ui_dump = device.shell('uiautomator dump /dev/tty')
-    #text = re.findall('text="(.*?)"',ui_dump)
-    resource_id = (re.findall('resource-id="(.*?)"',ui_dump))
-    bounds = re.findall('bounds="\[(.*?),(.*?)\]\[(.*?),(.*?)\]',ui_dump)
-    if len(resource_id) != len(bounds) or len(ui_dump) == 0:
-        print('Uh oh, something is wrong with the the UI info dumps')
-        exit()
     info = {}
     light_list = []
+    while len(info) == 0 or len(light_list) == 0:
+        ui_dump = device.shell('uiautomator dump /dev/tty')
+        #text = re.findall('text="(.*?)"',ui_dump)
+        resource_id = (re.findall('resource-id="(.*?)"',ui_dump))
+        bounds = re.findall('bounds="\[(.*?),(.*?)\]\[(.*?),(.*?)\]',ui_dump)
+        
+        while len(resource_id) == 0 or len(bounds) == 0 or len(resource_id) != len(bounds):
+            ui_dump = device.shell('uiautomator dump /dev/tty')
+            #text = re.findall('text="(.*?)"',ui_dump)
+            resource_id = (re.findall('resource-id="(.*?)"',ui_dump))
+            bounds = re.findall('bounds="\[(.*?),(.*?)\]\[(.*?),(.*?)\]',ui_dump)
 
-    x1,y1,x2,y2 = zip(*bounds)
-    x1 = list(map(int,x1))
-    y1 = list(map(int,y1))
-    x2 = list(map(int,x2))
-    y2 = list(map(int,y2))
-    for id in range(len(resource_id)):
-        if resource_id[id] == 'com.govee.home:id/img_icon':
-            position = find_position(x1[id],y1[id],x2[id],y2[id])
-            light_list.append(position)
-        if resource_id[id] == 'com.govee.home:id/bg_view' or resource_id[id] =='com.govee.home:id/content':
-            info[resource_id[id]] = {"x1" : x1[id],"y1": y1[id],"x2":x2[id],"y2":y2[id]}
-    if len(info) == 0 or len(light_list) == 0:
-        print('Number of interactions is too much, please stand by')
-        exit()
+        x1,y1,x2,y2 = zip(*bounds)
+        x1 = list(map(int,x1))
+        y1 = list(map(int,y1))
+        x2 = list(map(int,x2))
+        y2 = list(map(int,y2))
+        for id in range(len(resource_id)):
+            if resource_id[id] == 'com.govee.home:id/img_icon':
+                position = find_position(x1[id],y1[id],x2[id],y2[id])
+                light_list.append(position)
+            if resource_id[id] == 'com.govee.home:id/bg_view' or resource_id[id] =='com.govee.home:id/content':
+                info[resource_id[id]] = {"x1" : x1[id],"y1": y1[id],"x2":x2[id],"y2":y2[id]}
+
     return info, light_list
 
 
