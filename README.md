@@ -1,3 +1,4 @@
+https://img.shields.io/github/v/release/mankeldy/govee-stream-controller?label=Release&logoColor=blue
 ![GitHub all releases](https://img.shields.io/github/downloads/mankeldy/govee-stream-controller/total?label=Downloads)
 
 Feel free to use this for your own stream (if you could credit me, I'd really appreciate it). If you have any ideas for things to add, let me know! I built this on my own so be nice :)  And if you have any trouble setting it up, feel free to reach out.
