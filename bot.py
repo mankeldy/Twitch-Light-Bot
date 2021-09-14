@@ -2,18 +2,16 @@
 
 import os
 from ppadb.command import transport # for importing env vars for the bot to use
-#import twitchio
 from twitchio.ext import commands
 import govee_controller as gv
+from govee_controller import *
 from dotenv import load_dotenv
 import socketio
 import time
-from storage import *
+from storage import * 
 from datetime import datetime
 
 load_dotenv()
-device,client = gv.connect() #connects to android phone or emulator
-
 sio = socketio.Client()
 sio.connect('https://sockets.streamlabs.com?token=' + os.environ['STREAMLABS_SOCKET_API_TOKEN']) #connects to Streamlabs
 

@@ -6,9 +6,6 @@ import time
 from pathlib import Path
 import sys
 import re
-#import pandas as pd
-phone_res_y = 1600
-phone_res_x = 900
 
 def connect(host = 'localhost', port = 5037):
     """
@@ -54,11 +51,14 @@ def open_govee_lights(device):
         time.sleep(4)
         current_activity = device.shell('dumpsys window windows | grep -E mCurrentFocus')
 
-    
+
     if main_govee_screen in current_activity:
+        resource_id,bounds = pull_ui(device)
+        x1,y1,x2,y2 = bounds[resource_id.index('com.govee.home:id/controller')]
+        light_selector_position = find_position(int(x1),int(y1),int(x2),int(y2))
         print('govee in main screen, going to controller')
-        device.shell('input tap 300 920') #selects the light
-        time.sleep(4) 
+        device.shell('input tap {} {}'.format(light_selector_position[0],light_selector_position[1])) #selects the light
+        time.sleep(6) 
         current_activity = device.shell('dumpsys window windows | grep -E mCurrentFocus')
     
     ui = govee_ui(device)[0]
@@ -140,25 +140,36 @@ def timed_light(device,light_list,current_mode,timed_mode,set_time = 1):
     time.sleep(set_time)
     select_lights(device,light_list,current_mode)
 
+
 def find_position(x1,y1,x2,y2):
-    pos_x = int((x2-x1)/2+x1)
-    pos_y = int((y2-y1)/2+y1)
-    return [pos_x,pos_y]
+    """
+    Finds the middle position of the four corners of an object on screen
+    Arguments:
+        x1,y1,x2,y2 = bounds of the object
+    Returns:
+        [x,y] = array of midpoint position
+    """
+    x = int((x2-x1)/2+x1)
+    y = int((y2-y1)/2+y1)
+    return [x,y]
+
 
 def govee_ui(device):
+    """
+    Determines the positions of the lights and the other components of the Govee app 
+    Arguments:
+        device = connected device
+    Returns:
+        info = dictionary for graphical information used to maneuver the app into position
+        light_list = array of button positions in DIY selection
+    """
     info = {}
     light_list = []
     while len(info) == 0 or len(light_list) == 0:
-        ui_dump = device.shell('uiautomator dump /dev/tty')
-        #text = re.findall('text="(.*?)"',ui_dump)
-        resource_id = (re.findall('resource-id="(.*?)"',ui_dump))
-        bounds = re.findall('bounds="\[(.*?),(.*?)\]\[(.*?),(.*?)\]',ui_dump)
+        resource_id,bounds = pull_ui(device)
         
         while len(resource_id) == 0 or len(bounds) == 0 or len(resource_id) != len(bounds):
-            ui_dump = device.shell('uiautomator dump /dev/tty')
-            #text = re.findall('text="(.*?)"',ui_dump)
-            resource_id = (re.findall('resource-id="(.*?)"',ui_dump))
-            bounds = re.findall('bounds="\[(.*?),(.*?)\]\[(.*?),(.*?)\]',ui_dump)
+            resource_id,bounds = pull_ui(device)
 
         x1,y1,x2,y2 = zip(*bounds)
         x1 = list(map(int,x1))
@@ -175,7 +186,28 @@ def govee_ui(device):
     return info, light_list
 
 
+def pull_ui(device):
+        """
+        Pulls general UI information currently being displayed
+        Arguments:
+            device = connected device
+        Returns:
+            resource_id = object names of the various graphics (some return as empty strings)
+            bounds = array of positions for each resource_id
+    """
+        ui_dump = device.shell('uiautomator dump /dev/tty')
+        #text = re.findall('text="(.*?)"',ui_dump)
+        resource_id = (re.findall('resource-id="(.*?)"',ui_dump))
+        bounds = re.findall('bounds="\[(.*?),(.*?)\]\[(.*?),(.*?)\]',ui_dump)
+        return resource_id,bounds
+
+device, client = connect()
+resolution = device.shell('wm size')
+resolution_array = re.findall('Physical size: (.*)x(.*)',resolution)
+phone_res_y, phone_res_x = zip(*resolution_array)
+phone_res_y = int(phone_res_y[0])
+phone_res_x = int(phone_res_x[0])
+
 if __name__ == "__main__":
-    device, client = connect()
     open_govee_lights(device)
 
