@@ -1,6 +1,6 @@
 ![Github Release](https://img.shields.io/github/v/release/mankeldy/govee-stream-controller?color=blue&label=Release)
 
-Feel free to use this for your own stream (if you could credit me, I'd really appreciate it). If you have any ideas for things to add, let me know! I built this on my own so be nice :)  And if you have any trouble setting it up, feel free to reach out.
+Feel free to use this for your own stream (if you could credit me, I'd really appreciate it. Either linking the repository or twitch.tv/MuffinMan031 would suffice). If you have any ideas for things to add, let me know! I built this on my own so be nice :)  And if you have any trouble setting it up, feel free to reach out.
 
 This is not the first time anyone has made scripts to control the Govee LED lights. Typically, these involved using the Govee API to control the lights via wifi directly from the computer. However, it was unclear to me whether or not the RGBIC could be scripted to their full potential using this method. To avoid this issue, I created the script `govee_controller` to interface directly with the Govee Home App through your phone or emulator. `bot.py` is a simple bot that interfaces with streamlabs and twitch to allow notifications and twitch chat commands to control the lights.
 
