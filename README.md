@@ -28,6 +28,9 @@ Get your `Client ID`: https://dev.twitch.tv/console/apps/create (Honestly, not s
  - pipenv install twitchio
  - pipenv install dotenv
  
+## Add light configuration:
+  - Add the names of the light modes lists in `storage.py` (these do not have to be the same names in the Govee app, but will be the commands used to change the lights)
+ 
 ## Run the bot:
   - pipenv run python `bot.py`
   
