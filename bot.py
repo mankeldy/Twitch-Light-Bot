@@ -15,6 +15,10 @@ load_dotenv()
 sio = socketio.Client()
 sio.connect('https://sockets.streamlabs.com?token=' + os.environ['STREAMLABS_SOCKET_API_TOKEN']) #connects to Streamlabs
 
+API_QUERY = {'Govee-API-Key':os.environ['GOVEE_API_KEY']}
+
+govee_toggle("on",os.environ['MODEL'],os.environ['DEVICE_MAC_ADDRESS'],API_QUERY)
+
 @sio.on("connect")
 def on_connect():
     print("Connected to Streamlabs, Wait for Events")
@@ -23,7 +27,7 @@ def on_connect():
 print("Lights shown to users are {}".format(user_lights))
 
 #Actions
-gv.select_lights(device,lights, lights[-1]) #initial setting
+gv.select_lights(device,lights, lights[0]) #initial setting
 
 # set up the bot with the proper environment tokens and information
 bot = commands.Bot(
@@ -38,7 +42,7 @@ wait_time = dict.fromkeys(list_of_keys,0)
 time_to_wait =15.
 count = []
 current_light = [0]
-current_light[0] = 'rainbow_light'
+current_light[0] = lights[0]
 
 @sio.on("event")
 def on_message(data):
@@ -61,15 +65,24 @@ async def test(ctx):
     await ctx.send('test passed!')
 
 @bot.command(name='rgb')
-async def test(ctx,arg=None):
-    if arg == None:
+async def test(ctx,arg1=None,arg2=None,arg3=None):
+    if arg1==arg2==arg3==None:
         await ctx.send(str(user_lights))
     elif wait_time['rgb'] == 0 or (datetime.now().timestamp()-wait_time['rgb'] > time_to_wait and datetime.now().timestamp()-wait_time['event'] > time_to_wait):
-        if arg in lights:
+        if arg1 in lights:
             wait_time['rgb'] = datetime.now().timestamp()
-            await ctx.send('Changing to {}'.format(arg))
-            gv.select_lights(device,lights, arg)
-            current_light[0] = arg
+            await ctx.send('Changing to {}'.format(arg1))
+            gv.select_lights(device,lights, arg1)
+            current_light[0] = arg1
+
+        elif None not in {arg1,arg2,arg3} and 0 <= int(arg1) <= 255 and 0 <= int(arg2) <= 255 and 0 <= int(arg3) <= 255:
+            wait_time['rgb'] = datetime.now().timestamp()
+            await ctx.send('Changing to {} {} {}'.format(arg1,arg2,arg3))
+            govee_api_rgb(int(arg1),int(arg2),int(arg3),os.environ['MODEL'],os.environ['DEVICE_MAC_ADDRESS'],API_QUERY)
+
+        elif None in {arg1,arg2,arg3} or not 0 <= int(arg1) <= 255 or not 0 <= int(arg2) <= 255 or not 0 <= int(arg3) <= 255:
+            await ctx.send('Missing RGB values, check format')
+
     else:
         await ctx.send('please wait your turn')
 

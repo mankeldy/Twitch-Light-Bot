@@ -6,6 +6,7 @@ import time
 from pathlib import Path
 import sys
 import re
+import requests
 
 def connect(host = 'localhost', port = 5037):
     """
@@ -207,6 +208,30 @@ resolution_array = re.findall('Physical size: (.*)x(.*)',resolution)
 phone_res_y, phone_res_x = zip(*resolution_array)
 phone_res_y = int(phone_res_y[0])
 phone_res_x = int(phone_res_x[0])
+
+def govee_api_rgb(R,G,B,MODEL,DEVICE_MAC_ADDRESS,API_QUERY):
+    data = {"device": DEVICE_MAC_ADDRESS,
+        "model": MODEL,
+        "cmd": {
+        "name": "color",
+        "value": {"r":R,"g":G,"b":B}}
+    }
+    res = requests.put("https://developer-api.govee.com/v1/devices/control",json=data,headers=API_QUERY)
+    print(res)
+    return None
+
+def govee_toggle(state,MODEL,DEVICE_MAC_ADDRESS,API_QUERY):
+    data = {"device": DEVICE_MAC_ADDRESS,
+        "model": MODEL,
+        "cmd": {
+        "name": "turn",
+        "value": state}
+        }
+
+    res = requests.put("https://developer-api.govee.com/v1/devices/control",json=data,headers=API_QUERY)
+    print(res)
+    return None
+
 
 if __name__ == "__main__":
     open_govee_lights(device)
