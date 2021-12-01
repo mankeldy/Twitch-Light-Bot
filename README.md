@@ -16,11 +16,11 @@ Setting up the Twitch Bot would not have been possible without: https://dev.to/n
 Download Bluestacks 5 or similar emulator if not interfacing with your phone and download the Govee Home App
 
 ## Update the .env with your tokens and storage.py with your DIY light settings
-Get your `Streamlabs Socket API Token` : https://streamlabs.com/dashboard#/settings/api-settings (This connects the bot to streamlabs for their notifications)
-Get your `TMI Token`:  https://twitchapps.com/tmi/ (Connects your acccount/bot account to twitch)
-Get your `Client ID`: https://dev.twitch.tv/console/apps/create (Honestly, not sure what this does. Seems to run without it just fine, but I followed the guide above to the letter)
-Get your `Govee API key`: request a key via the Govee Home app (needed to send commands via the Govee API)
-Get your `Mac Address` and `Product Model`: you'll find it in the settings of the device
+Get your `Streamlabs Socket API Token` : https://streamlabs.com/dashboard#/settings/api-settings (This connects the bot to streamlabs for their notifications)<br />
+Get your `TMI Token`:  https://twitchapps.com/tmi/ (Connects your acccount/bot account to twitch)<br />
+Get your `Client ID`: https://dev.twitch.tv/console/apps/create (Honestly, not sure what this does. Seems to run without it just fine, but I followed the guide above to the letter)<br />
+Get your `Govee API key`: request a key via the Govee Home app (needed to send commands via the Govee API)<br />
+Get your `Mac Address` and `Product Model`: you'll find it in the settings of the device<br />
 
 
 ## Starting the virtual environment:
