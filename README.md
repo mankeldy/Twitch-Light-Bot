@@ -2,7 +2,7 @@
 
 Feel free to use this for your own stream (if you could credit me, I'd really appreciate it. Either linking the repository or twitch.tv/MuffinMan031 would suffice). If you have any ideas for things to add, let me know! I built this on my own so be nice :)  And if you have any trouble setting it up, feel free to reach out.
 
-This is not the first time anyone has made scripts to control the Govee LED lights. Typically, these involved using the Govee API to control the lights via wifi directly from the computer. However, it was unclear to me whether or not the RGBIC could be scripted to their full potential using this method. To avoid this issue, I created the script `govee_controller` to interface directly with the Govee Home App through your phone or emulator. `bot.py` is a simple bot that interfaces with streamlabs and twitch to allow notifications and twitch chat commands to control the lights.
+This is not the first time anyone has made scripts to control the Govee LED lights. Typically, these involved using the Govee API to control the lights via wifi directly from the computer. However, it was unclear to me whether the DIY modes could be changed using the API. To avoid this issue, I created the script `govee_controller` to interface directly with the Govee Home App through your phone or emulator and send direct RGB commands via the API. `bot.py` is a simple bot that interfaces with Streamlabs and Twitch.tv to allow notifications and twitch chat commands to control the lights. 
 
 Known Compatible Configurations -<br />
 Phone: Samsung Galaxy S10 <br />
@@ -19,6 +19,9 @@ Download Bluestacks 5 or similar emulator if not interfacing with your phone and
 Get your `Streamlabs Socket API Token` : https://streamlabs.com/dashboard#/settings/api-settings (This connects the bot to streamlabs for their notifications)
 Get your `TMI Token`:  https://twitchapps.com/tmi/ (Connects your acccount/bot account to twitch)
 Get your `Client ID`: https://dev.twitch.tv/console/apps/create (Honestly, not sure what this does. Seems to run without it just fine, but I followed the guide above to the letter)
+Get your `Govee API key`: request a key via the Govee Home app (needed to send commands via the Govee API)
+Get your `Mac Address` and `Product Model`: you'll find it in the settings of the device
+
 
 ## Starting the virtual environment:
  - Install python 3.6 or 3.7
@@ -37,3 +40,8 @@ Get your `Client ID`: https://dev.twitch.tv/console/apps/create (Honestly, not s
   OR 
   
   - In Visual Studio Code, select the interpreter as your virtual environment and run the code.
+
+  OR 
+  
+  - Follow the instructions in the Twitch Light Bot.bat file to run the code on its own. A shortcut can be made on the desktop for an easier startup
+
