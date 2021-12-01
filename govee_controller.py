@@ -8,6 +8,7 @@ import sys
 import re
 import requests
 
+
 def connect(host = 'localhost', port = 5037):
     """
     Connects to the device. If using BlueStacks android emulator, the host should be 
@@ -34,17 +35,19 @@ def connect(host = 'localhost', port = 5037):
 
 def open_govee_lights(device):
     """
-    While the device is on, open_govee_lights will open the govee app
-    until it reaches the DIY screen so that the light mode is ready to be changed.
+    While the device is on, open_govee_lights will open the govee app, selects the DIY tab if needed, and
+    moves the app into position for selection
     Arguments:
         device = connected device 
     Returns:
         None
     """
+
     current_activity = device.shell('dumpsys window windows | grep mCurrentFocus') #checks what screen is open
     is_govee_open = 'com.govee.home'
     main_govee_screen = 'com.govee.home.main.MainTabActivity'
     controller_screen = 'com.govee.dreamcolorlightv1.adjust.AdjustAcV2'
+    showing_diy = 'com.govee.home:id/showing_diy_list'
 
     if is_govee_open not in current_activity:
         print('opening govee')
@@ -61,15 +64,25 @@ def open_govee_lights(device):
         device.shell('input tap {} {}'.format(light_selector_position[0],light_selector_position[1])) #selects the light
         time.sleep(6) 
         current_activity = device.shell('dumpsys window windows | grep -E mCurrentFocus')
-    
+
+    resource_id,bounds = pull_ui(device)
+    if showing_diy not in resource_id:
+        x1,y1,x2,y2 = bounds[resource_id.index('com.govee.home:id/mode_4_icon')]
+        diy_tab_position = find_position(int(x1),int(y1),int(x2),int(y2))
+        print('Switching to DIY tab')
+        device.shell('input tap {} {}'.format(diy_tab_position[0],diy_tab_position[1]))
+        time.sleep(3) 
+
     ui = govee_ui(device)[0]
     if controller_screen in current_activity and ui['com.govee.home:id/bg_view']['y1'] != ui['com.govee.home:id/content']['y1'] and ui['com.govee.home:id/bg_view']['y2']==phone_res_y:
+
         print('moving into position')
         top_bar = ui['com.govee.home:id/content']['y1']
         top_of_selections = ui['com.govee.home:id/bg_view']['y1']
         swipe_time = int(((top_of_selections-top_bar)/0.25)/(phone_res_y/1280)) #Sets swipe speed to 0.25 if the phone were in 1280x720
         device.shell('input touchscreen swipe {} {} {} {} {}'.format(phone_res_x/2,top_of_selections,phone_res_x/2,top_bar,swipe_time)) #swipes up so that the modes can be selected
         current_activity = device.shell('dumpsys window windows | grep -E mCurrentFocus')
+
 
 
 def govee_grid(device,light_list):
@@ -155,52 +168,65 @@ def find_position(x1,y1,x2,y2):
     return [x,y]
 
 
-def govee_ui(device):
+def govee_ui(device, position = None):
     """
     Determines the positions of the lights and the other components of the Govee app 
     Arguments:
         device = connected device
+        position = optional argument if you need to find the name of a given ui element (only outputs this information when used)
     Returns:
         info = dictionary for graphical information used to maneuver the app into position
         light_list = array of button positions in DIY selection
     """
+    
     info = {}
     light_list = []
-    while len(info) == 0 or len(light_list) == 0:
-        resource_id,bounds = pull_ui(device)
-        
-        while len(resource_id) == 0 or len(bounds) == 0 or len(resource_id) != len(bounds):
-            resource_id,bounds = pull_ui(device)
+    ui_list = []
 
-        x1,y1,x2,y2 = zip(*bounds)
-        x1 = list(map(int,x1))
-        y1 = list(map(int,y1))
-        x2 = list(map(int,x2))
-        y2 = list(map(int,y2))
-        for id in range(len(resource_id)):
-            if resource_id[id] == 'com.govee.home:id/img_icon':
-                position = find_position(x1[id],y1[id],x2[id],y2[id])
-                light_list.append(position)
-            if resource_id[id] == 'com.govee.home:id/bg_view' or resource_id[id] =='com.govee.home:id/content':
-                info[resource_id[id]] = {"x1" : x1[id],"y1": y1[id],"x2":x2[id],"y2":y2[id]}
+    if position != None:
+        resource_id,bounds = pull_ui(device)
+        for pos in range(len(bounds)):
+            if bounds[pos] == position:
+                ui_list.append(resource_id[pos])
+        print("Here is the list of resource_id(s) with that position {}".format(ui_list))
+    
+    else:
+        while len(info) == 0 or len(light_list) == 0:
+            resource_id,bounds = pull_ui(device)
+            
+            while len(resource_id) == 0 or len(bounds) == 0 or len(resource_id) != len(bounds):
+                resource_id,bounds = pull_ui(device)
+
+            x1,y1,x2,y2 = zip(*bounds)
+            x1 = list(map(int,x1))
+            y1 = list(map(int,y1))
+            x2 = list(map(int,x2))
+            y2 = list(map(int,y2))
+            for id in range(len(resource_id)):
+                if resource_id[id] == 'com.govee.home:id/img_icon':
+                    position = find_position(x1[id],y1[id],x2[id],y2[id])
+                    light_list.append(position)
+                if resource_id[id] == 'com.govee.home:id/bg_view' or resource_id[id] =='com.govee.home:id/content':
+                    info[resource_id[id]] = {"x1" : x1[id],"y1": y1[id],"x2":x2[id],"y2":y2[id]}
 
     return info, light_list
 
 
 def pull_ui(device):
-        """
-        Pulls general UI information currently being displayed
-        Arguments:
-            device = connected device
-        Returns:
-            resource_id = object names of the various graphics (some return as empty strings)
-            bounds = array of positions for each resource_id
     """
-        ui_dump = device.shell('uiautomator dump /dev/tty')
-        #text = re.findall('text="(.*?)"',ui_dump)
-        resource_id = (re.findall('resource-id="(.*?)"',ui_dump))
-        bounds = re.findall('bounds="\[(.*?),(.*?)\]\[(.*?),(.*?)\]',ui_dump)
-        return resource_id,bounds
+    Pulls general UI information currently being displayed
+    Arguments:
+        device = connected device
+    Returns:
+        resource_id = object names of the various graphics (some return as empty strings)
+        bounds = array of positions for each resource_id
+    """
+    ui_dump = device.shell('uiautomator dump /dev/tty')
+    #text = re.findall('text="(.*?)"',ui_dump)
+    resource_id = (re.findall('resource-id="(.*?)"',ui_dump))
+    bounds = re.findall('bounds="\[(.*?),(.*?)\]\[(.*?),(.*?)\]',ui_dump)
+    return resource_id,bounds
+
 
 device, client = connect()
 resolution = device.shell('wm size')
@@ -210,6 +236,16 @@ phone_res_y = int(phone_res_y[0])
 phone_res_x = int(phone_res_x[0])
 
 def govee_api_rgb(R,G,B,MODEL,DEVICE_MAC_ADDRESS,API_QUERY):
+    """
+    Interfaces with Govee API to change color of lights via R G B values.
+    Arguments:
+        R,G,B = values from 0-255 corresponding to color level
+        MODEL = Govee light model (found in app)
+        DEVICE_MAC_ADDRESS = Mac address for Govee lights (found in app)
+        API_QUERY = header information containing Govee API key (obtained from Govee)
+    Returns:
+        200 indicates successful request
+    """
     data = {"device": DEVICE_MAC_ADDRESS,
         "model": MODEL,
         "cmd": {
@@ -221,6 +257,16 @@ def govee_api_rgb(R,G,B,MODEL,DEVICE_MAC_ADDRESS,API_QUERY):
     return None
 
 def govee_toggle(state,MODEL,DEVICE_MAC_ADDRESS,API_QUERY):
+    """
+    Interfaces with Govee API to change color of lights via R G B values.
+    Arguments:
+        state = "on" or "off"
+        MODEL = Govee light model (found in app)
+        DEVICE_MAC_ADDRESS = Mac address for Govee lights (found in app)
+        API_QUERY = header information containing Govee API key (obtained from Govee)
+    Returns:
+        200 indicates successful request
+    """
     data = {"device": DEVICE_MAC_ADDRESS,
         "model": MODEL,
         "cmd": {
@@ -235,4 +281,5 @@ def govee_toggle(state,MODEL,DEVICE_MAC_ADDRESS,API_QUERY):
 
 if __name__ == "__main__":
     open_govee_lights(device)
+
 
