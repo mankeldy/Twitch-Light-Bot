@@ -27,7 +27,7 @@ def on_connect():
 print("Lights shown to users are {}".format(user_lights))
 
 #Actions
-gv.select_lights(device,lights, lights[0]) #initial setting
+gv.select_lights(device,lights, user_lights[0]) #initial setting
 
 # set up the bot with the proper environment tokens and information
 bot = commands.Bot(
@@ -42,7 +42,7 @@ wait_time = dict.fromkeys(list_of_keys,0)
 time_to_wait =15.
 count = []
 current_light = [0]
-current_light[0] = lights[0]
+current_light[0] = user_lights[0]
 
 @sio.on("event")
 def on_message(data):
