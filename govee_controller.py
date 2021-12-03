@@ -125,7 +125,7 @@ def select_lights(device,light_list,mode):
     Selects the light mode in the DIY tab
     Arguments:
         device = connected device
-        grid = dictionary, x-y coordinate for each mode with the modes as keys.
+        light_list = list of light modes
         mode = string, desired selection
     Returns:
         None
@@ -143,7 +143,7 @@ def timed_light(device,light_list,current_mode,timed_mode,set_time = 1):
     be defined.
     Arguments:
         device = connected device
-        grid = dictionary, x-y coordinate for each mode with the modes as keys.
+        light_list = list of light modes
         current_mode = light mode that will the lights will be set to after set_time has passed
         timed_mode = light mode that will be active for a length of time.
         set_time = desired length of time before the lights change from timed_mode to current_mode. default set to 3 seconds
