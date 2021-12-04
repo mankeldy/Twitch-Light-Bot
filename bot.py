@@ -17,6 +17,7 @@ sio.connect('https://sockets.streamlabs.com?token=' + os.environ['STREAMLABS_SOC
 
 API_QUERY = {'Govee-API-Key':os.environ['GOVEE_API_KEY']}
 
+device, client = connect()
 govee_toggle("on",os.environ['MODEL'],os.environ['DEVICE_MAC_ADDRESS'],API_QUERY)
 
 @sio.on("connect")

@@ -10,6 +10,8 @@ python-dotenv = "*"
 python-socketio = {version = "==4.6.0", extras = ["client"]}
 python-engineio = "==3.14.2"
 aiohttp = ">=3.7.4"
+pytest = "*"
+pytest-cov = "*"
 
 [dev-packages]
 

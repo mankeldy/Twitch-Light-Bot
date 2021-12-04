@@ -42,7 +42,8 @@ def open_govee_lights(device):
     Returns:
         None
     """
-
+    phone_res_x,phone_res_y = find_resolution(device)
+        
     current_activity = device.shell('dumpsys window windows | grep mCurrentFocus') #checks what screen is open
     is_govee_open = 'com.govee.home'
     main_govee_screen = 'com.govee.home.main.MainTabActivity'
@@ -108,18 +109,6 @@ def govee_grid(device,light_list):
     return dictionary
 
 
-def toggle_lights(device):
-    """
-    Presses the power button in govee.
-    Arguments:
-        device = connected device
-    Returns:
-        None
-    """
-    open_govee_lights(device)
-    device.shell('input tap 910 275')
-
-
 def select_lights(device,light_list,mode):
     """
     Selects the light mode in the DIY tab
@@ -159,7 +148,8 @@ def find_position(x1,y1,x2,y2):
     """
     Finds the middle position of the four corners of an object on screen
     Arguments:
-        x1,y1,x2,y2 = bounds of the object
+        x1,y1 = left bounds of object
+        x2,y2 = right bounds of object
     Returns:
         [x,y] = array of midpoint position
     """
@@ -227,13 +217,13 @@ def pull_ui(device):
     bounds = re.findall('bounds="\[(.*?),(.*?)\]\[(.*?),(.*?)\]',ui_dump)
     return resource_id,bounds
 
-
-device, client = connect()
-resolution = device.shell('wm size')
-resolution_array = re.findall('Physical size: (.*)x(.*)',resolution)
-phone_res_y, phone_res_x = zip(*resolution_array)
-phone_res_y = int(phone_res_y[0])
-phone_res_x = int(phone_res_x[0])
+def find_resolution(device):
+    resolution = device.shell('wm size')
+    resolution_array = re.findall('Physical size: (.*)x(.*)',resolution)
+    phone_res_y, phone_res_x = zip(*resolution_array)
+    phone_res_y = int(phone_res_y[0])
+    phone_res_x = int(phone_res_x[0])
+    return phone_res_x, phone_res_y
 
 def govee_api_rgb(R,G,B,MODEL,DEVICE_MAC_ADDRESS,API_QUERY):
     """
@@ -246,6 +236,7 @@ def govee_api_rgb(R,G,B,MODEL,DEVICE_MAC_ADDRESS,API_QUERY):
     Returns:
         200 indicates successful request
     """
+
     data = {"device": DEVICE_MAC_ADDRESS,
         "model": MODEL,
         "cmd": {
@@ -254,7 +245,7 @@ def govee_api_rgb(R,G,B,MODEL,DEVICE_MAC_ADDRESS,API_QUERY):
     }
     res = requests.put("https://developer-api.govee.com/v1/devices/control",json=data,headers=API_QUERY)
     print(res)
-    return None
+    return res
 
 def govee_toggle(state,MODEL,DEVICE_MAC_ADDRESS,API_QUERY):
     """
@@ -276,10 +267,11 @@ def govee_toggle(state,MODEL,DEVICE_MAC_ADDRESS,API_QUERY):
 
     res = requests.put("https://developer-api.govee.com/v1/devices/control",json=data,headers=API_QUERY)
     print(res)
-    return None
+    return res
 
 
 if __name__ == "__main__":
+    device, client = connect()
     open_govee_lights(device)
 
 
