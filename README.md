@@ -1,4 +1,5 @@
 ![Github Release](https://img.shields.io/github/v/release/mankeldy/govee-stream-controller?color=blue&label=Release)
+[![codecov](https://codecov.io/gh/mankeldy/Twitch-Light-Bot/branch/main/graph/badge.svg?token=X0P6ZW6YN1)](https://codecov.io/gh/mankeldy/Twitch-Light-Bot)
 
 Feel free to use this for your own stream (if you could credit me, I'd really appreciate it. Either linking the repository or twitch.tv/MuffinMan031 would suffice). If you have any ideas for things to add, let me know! I built this on my own so be nice :)  And if you have any trouble setting it up, feel free to reach out.
 
